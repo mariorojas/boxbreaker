@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block content %}
+<div id="new-attempt">
+    <h1 class="border-bottom text-center pb-2">{% translate 'New attempt' %}</h1>
+    <form class="col-4 mx-auto text-center mb-5" method="post">{% csrf_token %}
+        {{ form | crispy }}
+        <div class="d-grid gap-2">
+            <input class="btn btn-primary" type="submit" value="{% translate 'Submit' %}">
+        </div>
+    </form>
+</div>
+{% endblock %}

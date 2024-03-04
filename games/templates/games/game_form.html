@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block content %}
+<div id="new-game">
+    <h1 class="border-bottom text-center pb-2 mb-5">{% translate 'New game'%}</h1>
+    <div class="col-4 mx-auto text-center mt-5">
+        <form method="post">{% csrf_token %}
+            {{ form }}
+            <input class="btn btn-link" type="submit" value="{% translate 'New game' %}">
+        </form>
+    </div>
+</div>
+{% endblock %}

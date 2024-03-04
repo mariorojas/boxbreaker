@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block content %}
+<div id="game-detail">
+    <h1 class="border-bottom text-center pb-2">{% translate 'Game' %} #{{ object.pk }}</h1>
+    <p class="text-center mb-4"><code>{{ object.uuid }}</code></p>
+
+    {% if object.completed %}
+        <div class="fw-bold text-center alert alert-{{ object.win | yesno:'success,danger' }} mb-4" role="alert">
+            {% if object.win %}
+                {% translate 'You got' %} {{ object.points}} {% translate 'points!' %} 🏆
+            {% else %}
+                {% translate 'You lose!' %}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <h2 class="h4 text-center">{% translate 'Attempts' %}</h2>
+    <ul class="list-group text-center col-4 mx-auto mb-3">
+        {% for el in formatted_attempts %}
+            <li class="list-group-item">
+                {% for a in el %}
+                    {% if a.correct %}
+                        <span class="badge text-bg-success">{{ a.guess }}</span>
+                    {% elif a.exists %}
+                        <span class="badge text-bg-warning">{{ a.guess }}</span>
+                    {% else %}
+                        <span class="badge text-bg-light">{{ a.guess }}</span>
+                    {%endif %}
+                {% endfor %}
+            </li>
+        {% empty %}
+            <li class="list-group-item">{% translate 'No attempts yet.' %}</li>
+        {% endfor %}
+    </ul>
+
+    <p class="fw-bold text-center mb-5">
+        {% if object.completed %}
+            {% translate 'Answer:' %} <code>{{ object.answer}}</code>
+        {% else %}
+            {% translate 'Remaining attempts:' %} <span class="badge text-bg-danger">{{ remaining_attempts }}</span>
+        {% endif %}
+    </p>
+
+    <div class="col-4 mx-auto text-center mb-5">
+        {% if object.completed %}
+            <form action="{% url 'games:new' %}" method="post">{% csrf_token %}
+                <input class="btn btn-outline-primary" type="submit" value="{% translate 'New game' %}">
+            </form>
+        {% else %}
+            <form action="{% url 'games:new-attempt' object.uuid %}" method="post">{% csrf_token %}
+                {{ form | crispy }}
+                <div class="d-grid gap-2">
+                    <input class="btn btn-primary" type="submit" value="{% translate 'Submit' %}">
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
